@@ -104,19 +104,19 @@ class Solution:
         return lst
     
     def val(self, pos):
-        return -self.dungeon[pos[0]][pos[1]] + self.base
+        return -self.dungeon[pos[0]][pos[1]]
 
     def calculateMinimumHP(self, dungeon):
         self.m = len(dungeon)
         self.n = len(dungeon[0])
         self.dungeon = dungeon
-        self.base = max ([row[i] for row in dungeon for i in range(self.n)])
+
         open_list = dict()
         close_list = dict()
         heap = PriorityQueue(Node(pos=(-1, -1), G=0, H=0, F=-2147483648))
         
         pos = (0,0)
-        node = Node(pos=pos, G=self.val(pos), H=1, F=self.val(pos))
+        node = Node(pos=pos, G=self.val(pos), H=0, F=self.val(pos))
         open_list[pos] = node
         heap.push(node)
         
@@ -128,7 +128,6 @@ class Solution:
 #             print node
             if node.pos == (self.m-1, self.n-1):
                 F = node.F
-                H = node.H
                 break
             if not open_list.has_key(node.pos):
                 #not in open list, skip
@@ -140,11 +139,7 @@ class Solution:
                 if close_list.has_key(x):
                     # in close list
                     continue
-                if node.G+self.val(x) > node.F:
-                    new_node = Node(pos=x, G=node.G+self.val(x), H=x[0]+x[1], F=node.G+self.val(x))
-                else:
-                    new_node = Node(pos=x, G=node.G+self.val(x), H=node.H, F=node.F)
-#                 new_node = Node(pos=x, G=node.G+self.val(x), H=0, F=max(node.G+self.val(x),node.F))
+                new_node = Node(pos=x, G=node.G+self.val(x), H=0, F=max(node.G+self.val(x),node.F))
                 if open_list.has_key(x):
                     # in open list         
                     old_node = open_list[x]           
@@ -158,19 +153,14 @@ class Solution:
                         pass
                 else:
                     # not in open list
-                    if node.G+self.val(x) > node.F:
-                        new_node = Node(pos=x, G=node.G+self.val(x), H=x[0]+x[1], F=node.G+self.val(x))
-                    else:
-                        new_node = Node(pos=x, G=node.G+self.val(x), H=node.H, F=node.F)
-#                     new_node = Node(pos=x, G=node.G+self.val(x), H=0, F=max(node.G+self.val(x),node.F))
+                    new_node = Node(pos=x, G=node.G+self.val(x), H=0, F=max(node.G+self.val(x),node.F))
                     open_list[x] = new_node
                     heap.push(new_node)
-        F = F - H * self.base
         if F < 0:
             F = 0
         return F + 1
                 
-                     
+                    
             
         
 
